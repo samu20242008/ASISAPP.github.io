@@ -1,0 +1,627 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Anual de Asistencia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #007BFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #main-content {
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .header, .subheader {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .button-container {
+            margin: 20px 0;
+            padding: 0 10px;
+        }
+        .form-section, .welcome-section, .attendance-section, .history-section, .reports-section {
+            width: 100%;
+            max-width: 90%;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+        .form-section input,
+        .attendance-section input,
+        .history-section input,
+        select {
+            width: calc(100% - 20px);
+        }
+        table {
+            width: 100%;
+        }
+        .history-buttons, .attendance-buttons, .welcome-buttons {
+            width: 100%;
+        }
+        .header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .header-title {
+            font-size: 24px;
+            margin: 0;
+            color: white;
+        }
+        .subheader {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .header-title:hover, .subheader h2:hover {
+            color: #007BFF;
+            background-color: white;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .button, .submit-button {
+            background-color: white;
+            color: #007BFF;
+            border: 2px solid #007BFF;
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: block;
+            width: 220px;
+            margin: 10px auto;
+            font-family: 'Times New Roman', serif;
+            text-align: center;
+        }
+        .button:hover, .submit-button:hover {
+            background-color: #007BFF;
+            color: white;
+            transform: scale(1.05);
+        }
+        .back-button {
+            margin-top: 10px;
+            width: 220px;
+            font-size: 16px;
+            background-color: white;
+            color: #007BFF;
+            border: 2px solid #007BFF;
+            font-family: 'Times New Roman', serif;
+        }
+        .back-button:hover {
+            background-color: #007BFF;
+            color: white;
+            transform: scale(1.05);
+        }
+        .form-section, .welcome-section, .attendance-section, .history-section, .reports-section {
+            display: none;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-section label,
+        .welcome-section p,
+        .history-section p,
+        .attendance-section label,
+        .attendance-section b,
+        .history-section b,
+        table, th, td,
+        #historyResults p {
+            color: #007BFF;
+            text-align: center;
+        }
+        .form-section input,
+        .attendance-section input,
+        .history-section input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .welcome-buttons, .history-buttons, .attendance-buttons {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .attendance-section h3,
+        .history-section h3 {
+            text-align: center;
+            color: #007BFF;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        select {
+            background-color: white;
+            color: #007BFF;
+            border: 2px solid #007BFF;
+            font-size: 16px;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-family: 'Times New Roman', serif;
+            text-align: center;
+            width: calc(100% - 22px);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s ease;
+        }
+        select:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+        #userWelcomeName {
+            color: #007BFF;
+        }
+        #historyResults {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <div class="header">
+            <h1 class="header-title">REGISTRO ANUAL DE LA ASISTENCIA A LAS REUNIONES</h1>
+        </div>
+        <div class="subheader">
+            <h2>Congregación - "Centro Formosa"</h2>
+        </div>
+        <div class="button-container">
+            <button class="button" onclick="showLoginForm()">Iniciar Sesión</button>
+            <button class="button" onclick="showRegisterForm()">Registrarse</button>
+        </div>
+        <div id="formContainer">
+            <!-- Login Form -->
+            <div class="form-section" id="loginForm">
+                <h3>Iniciar Sesión</h3>
+                <input type="text" placeholder="Usuario" id="username" required>
+                <input type="password" placeholder="Contraseña" id="password" required>
+                <button class="submit-button" onclick="submitLogin()">Ingresar</button>
+            </div>
+
+            <!-- Register Form -->
+            <div class="form-section" id="registerForm">
+                <h3>Registrarse</h3>
+                <input type="text" placeholder="Usuario" id="newUsername" required>
+                <input type="password" placeholder="Contraseña" id="newPassword" required>
+                <button class="submit-button" onclick="submitRegister()">Registrar</button>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="welcome-section" id="welcomeMessage">
+                <h3>¡Bienvenido <span id="userWelcomeName"></span>!</h3>
+                <p>¿Qué quieres revisar hoy? 😁</p>
+                <div class="welcome-buttons">
+                    <button class="button" onclick="showAttendanceSection()">Registrar Asistencia</button>
+                    <button class="button" onclick="showHistorySection()">Ver Historial</button>
+                    <button class="button" onclick="toggleReportButtons()">Ver Informes</button>
+                    <button class="button back-button" onclick="goBack()">Volver</button>
+                </div>
+            </div>
+
+            <!-- Reports Menu -->
+            <div class="reports-section" id="reportsSection" style="display: none;">
+                <h3 style="color: #007BFF;">Elija una opción</h3>
+                <button class="button" onclick="viewMonthlyReport()">Ver Informe Mensual</button>
+                <button class="button back-button" onclick="goBackFromReports()">Volver</button>
+            </div>
+            
+            <!-- New section for showing monthly report details -->
+            <div id="monthlyReportDetailsSection" class="reports-section" style="display: none; text-align: center;">
+                <h3 style="color: #007BFF;">Detalles del Informe Mensual</h3>
+                <p><b>Promedio Del Mes:</b> <span id="monthlyAverage">0</span></p>
+                <label for="reportMonthSelector">Mes:</label>
+                <select id="reportMonthSelector">
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+                <label for="reportYearSelector">Año:</label>
+                <select id="reportYearSelector">
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select>
+                <p><b>Reunión con la asistencia más alta:</b> <span id="highestAttendanceMeeting">0</span></p>
+                <p><b>Reunión con la asistencia más baja:</b> <span id="lowestAttendanceMeeting">0</span></p>
+                <button class="button back-button" onclick="goBackFromReportDetails()">Volver</button>
+            </div>
+
+            <!-- New section for showing only the Promedio Del Mes -->
+            <div id="monthlyAverageSection" class="reports-section" style="display: none; text-align: center;">
+                <h3 style="color: #007BFF;">Promedio de Asistencia Mensual</h3>
+                <p style="color: #007BFF;">Promedio Del Mes: <span id="monthlyAverage">0</span></p>
+                <button class="button back-button" onclick="goBackFromAverage()">Volver</button>
+            </div>
+
+            <!-- Attendance Section -->
+            <div class="attendance-section" id="attendanceSection">
+                <h3>Registro De Asistencia</h3>
+                <b>Por favor rellene los campos requeridos:</b>
+                <label>Fecha:</label>
+                <input type="date" id="attendanceDate" required style="margin-bottom: 20px;">
+                <label>Asistencia Presencial</label>
+                <input type="number" id="attendancePresential" placeholder="Asistentes en el salón" required oninput="calculateTotal()">
+                <label>Asistencia Virtual</label>
+                <input type="number" id="attendanceVirtual" placeholder="Asistentes en videoconferencia" required oninput="calculateTotal()">
+                <label>Asistencia Total</label>
+                <input type="number" id="attendanceTotal" placeholder="Total de asistentes" required disabled>
+                <button class="submit-button" onclick="registerAttendance()">Registrar Asistencia</button>
+                <div class="attendance-buttons">
+                    <button class="button back-button" onclick="goBack()">Volver</button>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="history-section" id="historySection">
+                <h3>Historial de Asistencia</h3>
+                <b>Filtrar por mes, semana y año:</b>
+                <select id="monthSelector">
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+                <select id="yearSelector">
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select>
+                <input type="number" id="weekSelector" placeholder="Número de semana" min="1" max="5" style="
+                    background-color: white;
+                    color: #007BFF;
+                    border: 2px solid #007BFF;
+                    font-size: 16px;
+                    padding: 10px;
+                    margin: 10px 0;
+                    cursor: pointer;
+                    font-family: 'Times New Roman', serif;
+                    text-align: center;
+                    width: calc(100% - 22px);
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    transition: background-color 0.3s ease;
+                " onfocus="this.style.backgroundColor='#007BFF'; this.style.color='white';" onblur="this.style.backgroundColor='white'; this.style.color='#007BFF';">
+                <button class="button" onclick="filterHistory()">Buscar</button>
+                <div id="historyResults">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Presencial</th>
+                                <th>Virtual</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Data will be appended here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="history-buttons">
+                    <button class="button" onclick="clearHistory()">Limpiar Historial</button>
+                    <button class="button back-button" onclick="goBack()">Volver</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background-color: #007BFF; color: white; text-align: center; padding: 20px; font-family: 'Times New Roman', serif;">
+        <p>Caballero Thiago Samuel Caballero - Todos Los Derechos Reservados - 2024</p>
+        <span style="font-size: 18px; font-weight: bold;">TM</span>
+    </footer>
+
+    <script>
+        let attendanceRecords = [
+            {Date: '01/09', Presencial: '62', Virtual: '20', Total: '82'},
+            {Date: '05/09', Presencial: '48', Virtual: '19', Total: '67'},
+            {Date: '08/09', Presencial: '54', Virtual: '19', Total: '73'},
+            {Date: '12/09', Presencial: '56', Virtual: '27', Total: '83'},
+            {Date: '15/09', Presencial: '45', Virtual: '27', Total: '72'},
+            {Date: '19/09', Presencial: '64', Virtual: '19', Total: '83'},
+            {Date: '22/09', Presencial: '46', Virtual: '28', Total: '74'},
+            {Date: '26/09', Presencial: '41', Virtual: '32', Total: '73'},
+            {Date: '29/09', Presencial: '62', Virtual: '18', Total: '80'},
+            {Date: '03/10', Presencial: '45', Virtual: '40', Total: '85'},
+            {Date: '06/10', Presencial: '', Virtual: '50', Total: '50'},
+            {Date: '10/10', Presencial: '40', Virtual: '35', Total: '75'},
+            {Date: '13/10', Presencial: '42', Virtual: '28', Total: '70'},
+            {Date: '17/10', Presencial: '53', Virtual: '18', Total: '71'},
+            {Date: '20/10', Presencial: '50', Virtual: '36', Total: '86'},
+            {Date: '11/01', Presencial: '', Virtual: '87', Total: '87'},
+        ];
+
+        function updateHistorySection(records) {
+            const historyResults = document.getElementById('historyResults');
+            const historyTableBody = document.getElementById('historyTableBody');
+            
+            if (records.length > 0) {
+                historyResults.style.display = 'block'; // Show the table if there are records
+                historyTableBody.innerHTML = ''; // Clear existing data
+                records.forEach(record => {
+                    const row = `<tr>
+                                    <td>${record.Date}</td>
+                                    <td>${record.Presencial || 0}</td>
+                                    <td>${record.Virtual || 0}</td>
+                                    <td>${record.Total || (parseInt(record.Presencial || 0) + parseInt(record.Virtual || 0))}</td>
+                                 </tr>`;
+                    historyTableBody.innerHTML += row;
+                });
+            } else {
+                historyResults.style.display = 'none'; // Hide the table if no data
+                historyTableBody.innerHTML = '<tr><td colspan="4">No hay datos para mostrar</td></tr>';
+            }
+        }
+        
+        updateHistorySection(attendanceRecords); // Initialize history section with data
+
+        async function fetchSheetData() {
+            const API_KEY = 'YOUR_GOOGLE_SHEETS_API_KEY'; // Replace with your actual API key
+            const spreadsheetId = '1H6JtchkwWduAJjiW3M2XqVIGQLiNcHfUnMW2kHsnYt4';
+            const sheetName = 'Sheet1'; // Update with the correct sheet name
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const rows = data.values;
+
+                attendanceRecords = rows.slice(1).map(row => {
+                    return rows[0].reduce((obj, header, index) => {
+                        obj[header] = row[index];
+                        return obj;
+                    }, {});
+                });
+
+                window.attendanceRecords = attendanceRecords; // Update the global variable with fetched data
+                updateHistorySection(attendanceRecords); // Populate the initial display
+            } catch (error) {
+                console.error('Error fetching sheet data:', error);
+            }
+        }
+
+        function filterHistory() {
+            const month = Number(document.getElementById('monthSelector').value);
+            const year = Number(document.getElementById('yearSelector').value);
+            const week = Number(document.getElementById('weekSelector').value) || null; 
+
+            const filteredData = window.attendanceRecords.filter(record => {
+                const [day, monthPart] = record.Date.split('/');
+                if (!day || !monthPart) {
+                    return false;
+                }
+                const recordDate = new Date(year, monthPart - 1, day);
+
+                const recordMonth = recordDate.getMonth() + 1;
+                const recordYear = recordDate.getFullYear();
+
+                return (recordMonth === month) && (recordYear === year) && (week ? getWeekNumber(recordDate) === week : true);
+            });
+
+            updateHistorySection(filteredData);
+        }
+
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        fetchSheetData(); // Ensure data is fetched immediately when the script runs
+
+        function calculateHighestAttendanceMeeting(records) {
+            let highestMeeting = records[0];
+            records.forEach(record => {
+                if (record.Total > highestMeeting.Total) {
+                    highestMeeting = record;
+                }
+            });
+            return highestMeeting.Date;
+        }
+
+        function calculateLowestAttendanceMeeting(records) {
+            let lowestMeeting = records[0];
+            records.forEach(record => {
+                if (record.Total < lowestMeeting.Total) {
+                    lowestMeeting = record;
+                }
+            });
+            return lowestMeeting.Date;
+        }
+
+        function calculateMonthlyAverage(records) {
+            if (records && records.length > 0) {
+                const totalAttendance = records.reduce((accum, record) => accum + Number(record.Total), 0);
+                return totalAttendance / records.length;
+            }
+            return 0;
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('attendanceSection').style.display = 'none';
+            document.getElementById('historySection').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('monthlyAverageSection').style.display = 'none';
+            document.getElementById('monthlyReportDetailsSection').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('attendanceSection').style.display = 'none';
+            document.getElementById('historySection').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('monthlyAverageSection').style.display = 'none';
+            document.getElementById('monthlyReportDetailsSection').style.display = 'none';
+        }
+
+        function submitLogin() {
+            const username = document.getElementById('username').value;
+
+            if (username) {
+                document.getElementById('userWelcomeName').textContent = username;
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('welcomeMessage').style.display = 'block';
+
+                document.querySelector('.button-container').style.display = 'none';
+            } else {
+                alert('Por favor, complete con su usuario.');
+            }
+        }
+
+        function submitRegister() {
+            const newUsername = document.getElementById('newUsername').value;
+
+            if (newUsername) {
+                alert('Registrando usuario ' + newUsername);
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('loginForm').style.display = 'block';
+
+                document.querySelector('.button-container').style.display = 'none';
+            } else {
+                alert('Por favor, complete con su usuario.');
+            }
+        }
+
+        function showAttendanceSection() {
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('attendanceSection').style.display = 'block';
+            document.getElementById('historySection').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('monthlyAverageSection').style.display = 'none';
+            document.getElementById('monthlyReportDetailsSection').style.display = 'none';
+        }
+
+        function showHistorySection() {
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('attendanceSection').style.display = 'none';
+            document.getElementById('historySection').style.display = 'block';
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('monthlyAverageSection').style.display = 'none';
+            document.getElementById('monthlyReportDetailsSection').style.display = 'none';
+        }
+
+        function toggleReportButtons() {
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'block';
+            document.getElementById('monthlyAverageSection').style.display = 'none';
+            document.getElementById('monthlyReportDetailsSection').style.display = 'none';
+        }
+
+        function goBack() {
+            document.getElementById('attendanceSection').style.display = 'none';
+            document.getElementById('historySection').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('monthlyAverageSection').style.display = 'none';
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block'; 
+        }
+
+        function goBackFromReports() {
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('welcomeMessage').style.display = 'block';
+            document.querySelector('.button-container').style.display = 'none';
+        }
+
+        function viewMonthlyReport() {
+            document.getElementById('reportsSection').style.display = 'none';
+            document.getElementById('monthlyReportDetailsSection').style.display = 'block';
+
+            const filteredReports = filterRecordsByDate();
+
+            if (filteredReports.length > 0) {
+                document.getElementById('highestAttendanceMeeting').textContent = calculateHighestAttendanceMeeting(filteredReports);
+                document.getElementById('lowestAttendanceMeeting').textContent = calculateLowestAttendanceMeeting(filteredReports);
+
+                const monthlyAverage = calculateMonthlyAverage(filteredReports);
+                document.getElementById('monthlyAverage').textContent = monthlyAverage;
+            }
+        }
+
+        function clearHistory() {
+            attendanceRecords = [];
+            updateHistorySection([]);
+            alert('Historial de asistencia limpiado.');
+        }
+
+        function registerAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const presential = parseInt(document.getElementById('attendancePresential').value) || 0;
+            const virtual = parseInt(document.getElementById('attendanceVirtual').value) || 0;
+            const total = presential + virtual;
+
+            if (date) {
+                attendanceRecords.push({ Date: date, Presencial: presential, Virtual: virtual, Total: total });
+                updateHistorySection(attendanceRecords);
+                alert('Asistencia registrada exitosamente.');
+            } else {
+                alert('Por favor, complete la fecha.');
+            }
+        }
+    </script>
+</body>
+</html>
